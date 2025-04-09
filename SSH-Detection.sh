@@ -50,13 +50,42 @@ check_failed_logins() {
         log_and_echo "Unable to locate authentication log file (/var/log/auth.log or /var/log/secure)."
     fi
 }
-
 main() {
     check_permissions
-    log_and_echo "Starting SSH Security Check..."
-    check_sshd_config
-    check_failed_logins
+    log_and_echo "Starting SSH Security Checker..."
+
+    while true; do
+        echo "-----------------------------------"
+        echo "Choose an option to perform:"
+        echo "1. Check sshd_config settings"
+        echo "2. Check failed login attempts"
+        echo "3. Run all checks"
+        echo "4. Exit"
+        read -rp "Enter your choice [1-4]: " choice
+
+        case "$choice" in
+            1)
+                check_sshd_config
+                ;;
+            2)
+                check_failed_logins
+                ;;
+            3)
+                check_sshd_config
+                check_failed_logins
+                ;;
+            4)
+                log_and_echo "Exiting SSH Security Checker."
+                break
+                ;;
+            *)
+                log_and_echo "Invalid option. Please enter a number between 1 and 4."
+                ;;
+        esac
+    done
+
     log_and_echo "SSH Security Check complete."
 }
+
 
 main
